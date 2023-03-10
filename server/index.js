@@ -1,13 +1,15 @@
 const express = require("express");
-const passport = require("passport")
+const passport = require("passport");
 const cookieSession = require("cookie-session");
 const cors = require("cors");
 const app = express();
 const PORT = 8080;
 const connectDB = require("./config/db");
 const authRoute = require("./routes/auth");
-const passportSetup = require('./passport');
-
+const passportSetup = require("./passport");
+const userRoute = require("./controllers/user.controller");
+const postRoute = require("./controllers/post.controller");
+const commentRoute = require("./controllers/comment.controller");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -34,6 +36,9 @@ app.use(
   })
 ); //what method and origin we used on fronted,Is allow us to send session to cient-server-request
 
+app.use("/user", userRoute);
+app.use("/post", postRoute);
+app.use("/comment", commentRoute);
 app.use("/auth", authRoute);
 
 app.listen(PORT, async () => {
