@@ -5,6 +5,7 @@ import Post from "./pages/Post";
 import Login from "./pages/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import CreatePost from "./pages/CreatePost";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -37,7 +38,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <div>
-        <Navbar user={user} />
+        {/* <Navbar user={user} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
@@ -48,7 +49,8 @@ const App = () => {
             path="/post/:id"
             element={user ? <Post /> : <Navigate to="/login" />}
           />
-        </Routes>
+        </Routes> */}
+        <CreatePost/>
       </div>
     </BrowserRouter>
   );
