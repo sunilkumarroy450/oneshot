@@ -2,6 +2,16 @@ const express = require("express");
 const PostModel = require("../models/post.model");
 const router = express.Router();
 
+//get
+router.get("/", async (req, res) => {
+  try {
+    const allPosts = await PostModel.find();
+    return res.status(201).send(allPosts)
+  } catch (error) {
+    return res.send({msg:'Something wrong happened'})
+  }
+});
+
 //post
 router.post("/create", async (req, res) => {
   const { title, body, createdBy, createdAt } = req.body;

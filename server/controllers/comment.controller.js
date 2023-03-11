@@ -2,6 +2,16 @@ const express = require("express");
 const CommentModel = require("../models/Comment.model");
 const router = express.Router();
 
+//get comment
+router.get("/", async (req, res) => {
+  try {
+    const allComments = await CommentModel.find();
+    return res.status(200).send(allComments);
+  } catch (error) {
+    return res.send({ msg: "Something went wrong" });
+  }
+});
+
 //Comment Creation
 router.post("/post", async (req, res) => {
   const { username, comment } = req.body;
