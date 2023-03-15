@@ -4,10 +4,13 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
+import LoginContextProvider from "./contexts/LoginContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ChakraProvider>
-    <App />
+    <LoginContextProvider>
+      <App />
+    </LoginContextProvider>
   </ChakraProvider>
 );
 

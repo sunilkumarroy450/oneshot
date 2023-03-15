@@ -4,9 +4,9 @@ const UserModel = require("../models/Users.model");
 
 //signup
 router.post("/register", async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role, image } = req.body;
   try {
-    const user = new UserModel({ username, email, password, role });
+    const user = new UserModel({ username, email, password, role, image });
     await user.save();
     return res.status(201).send(user);
   } catch (error) {
@@ -16,15 +16,13 @@ router.post("/register", async (req, res) => {
 
 //login
 router.post("/login", async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
   try {
-    const user = await UserModel.find({ email });
+    const user = await UserModel.findOne({ email });
     if (user) {
-    //   for (let i = 0; i < user.length; i++) {
-    //     if (user[i].email === email) {
-        // }
-        //   }
+      if (user.password === password) {
         return res.status(200).send({ login: true, userData: user });
+      }
     }
 
     return res.send({ login: false });

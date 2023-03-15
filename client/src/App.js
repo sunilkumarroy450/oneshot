@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CreatePost from "./pages/CreatePost";
+import LoginForm from "./pages/LoginForm";
+import Signup from "./pages/Signup";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -50,7 +52,11 @@ const App = () => {
             element={user ? <Post /> : <Navigate to="/login" />}
           />
         </Routes> */}
-        <CreatePost/>
+        <Routes>
+          <Route path="/" element={<CreatePost />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
       </div>
     </BrowserRouter>
   );

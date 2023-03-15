@@ -1,11 +1,12 @@
 const { Schema, model } = require("mongoose");
 
 const PostSchema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, required: false },
   body: { type: String, required: true },
-  createdBy: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   createdAt: {
     type: Date,

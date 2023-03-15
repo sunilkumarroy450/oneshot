@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChatIcon, EditIcon } from "@chakra-ui/icons";
+import "./style.css";
+
 import axios from "axios";
 import {
   Modal,
@@ -20,21 +24,18 @@ import {
   Heading,
   CardBody,
   CardFooter,
-  Divider,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
+  Tag,
+  Avatar,
+  TagLabel,
+  IconButton,
 } from "@chakra-ui/react";
+import { LoginContext } from "../contexts/LoginContext";
 const CreatePost = () => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
   const [createPost, setCreatePost] = useState({ body: "" });
+  const { userData: user } = useContext(LoginContext);
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const getPosts = () => {
     axios
@@ -54,9 +55,18 @@ const CreatePost = () => {
   }, []);
 
   const handleOnClickPostCreation = () => {
-    axios.post(`http://localhost:8080/post/create`);
+    axios
+      .post(`http://localhost:8080/post/create`, {
+        body: createPost?.body,
+        userId: user?.userData._id,
+      })
+      .then((res) => {
+        onClose();
+      })
+      .catch((err) => console.log(err));
   };
-
+  // console.log(posts, "posts");
+  console.log(comments, "commments");
   return (
     <Box w={"100%"}>
       <Box margin={"2rem"}>
@@ -67,7 +77,8 @@ const CreatePost = () => {
             colorScheme={"linkedin"}
           >
             <Button onClick={onOpen}>Create Post</Button>
-            <Button>Login</Button>
+            <Button onClick={() => navigate("/signup")}>Signup</Button>
+            <Button onClick={() => navigate("/login")}>Login</Button>
           </ButtonGroup>
         </Box>
 
@@ -86,7 +97,7 @@ const CreatePost = () => {
                 be the first one to create today's post
               </Text>
               <Input
-                onChange={(e) => setCreatePost(e.target.value)}
+                onChange={(e) => setCreatePost({ body: e.target.value })}
                 name="body"
                 value={createPost.body}
                 h={"10rem"}
@@ -109,11 +120,21 @@ const CreatePost = () => {
       <Box margin={"2rem"}>
         <SimpleGrid
           spacing={4}
-          templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+          templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
         >
           {posts?.map((item) => (
             <Card key={item._id}>
               <CardHeader>
+                <Tag size="lg" colorScheme="blue" borderRadius="full">
+                  <Avatar
+                    src={item.userId.image}
+                    size="xs"
+                    name={item.userId.username}
+                    ml={-1}
+                    mr={2}
+                  />
+                  <TagLabel>{item.userId.username}</TagLabel>
+                </Tag>
                 <Heading size="sm"> {item.title}</Heading>
               </CardHeader>
               <CardBody>
@@ -121,32 +142,46 @@ const CreatePost = () => {
               </CardBody>
 
               <CardFooter>
-                <ButtonGroup variant={"outline"} colorScheme={"linkedin"}>
-                  <Button>Edit</Button>
-                  <Button colorScheme="teal">Comment</Button>
-
-                  {/* <Box>
-                    <Popover>
-                      <PopoverTrigger>
-                        <Button colorScheme="teal">Comment</Button>
-                      </PopoverTrigger>
-                      <PopoverContent>
-                        <PopoverArrow />
-                        <PopoverHeader>
-                          <Input/>
-                        </PopoverHeader>
-                        <PopoverBody>
-                          <Button>Comment</Button>
-                        </PopoverBody>
-                      </PopoverContent>
-                    </Popover>
-                  </Box> */}
+                <ButtonGroup>
+                  <IconButton
+                    variant="outline"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    fontSize="20px"
+                    icon={<EditIcon />}
+                  />
+                  <IconButton
+                    variant="outline"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    fontSize="20px"
+                    icon={<ChatIcon />}
+                  />
                 </ButtonGroup>
               </CardFooter>
               {comments?.map((item) => (
                 <Box key={item._id} h={"5rem"}>
-                  <Box margin={"auto"} textAlign={"center"} w={"90%"}>
-                    {item.comment}
+                  <Tag size="sm" variant="outline" colorScheme="green" borderRadius="sm">
+                    <Avatar
+                      src={item.userId.image}
+                      size="2xs"
+                      name={item.userId.username}
+                      ml={-1}
+                      mr={2}
+                    />
+                    <TagLabel>{item.userId.username}</TagLabel>
+                  </Tag>
+                  <Box
+                    padding={".1rem"}
+                    className="commentContainer"
+                    margin={"auto"}
+                    textAlign={"center"}
+                    w={"90%"}
+                  >
+                    <Text fontSize="2xs" className="commentText">
+                      {" "}
+                      {item.comment}
+                    </Text>
                   </Box>
                 </Box>
               ))}
