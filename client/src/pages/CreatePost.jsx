@@ -34,6 +34,8 @@ const CreatePost = () => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
   const [createPost, setCreatePost] = useState({ body: "" });
+  const [createComment, setCreateComment] = useState({ comment: "" });
+  const [commentBoolean, setCommentBoolean] = useState(false);
   const { userData: user } = useContext(LoginContext);
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,8 +67,24 @@ const CreatePost = () => {
       })
       .catch((err) => console.log(err));
   };
-  // console.log(posts, "posts");
-  console.log(comments, "commments");
+
+  const handlerNewCommentPost = () => {
+    const data = comments.map((item) => item);
+    console.log(data, "data");
+    setCommentBoolean(true);
+    axios
+      .post(`http://localhost:8080/comment/post`, {
+        comment: createComment.comment,
+        userId: data.userId._id,
+        postId:data.postId
+      })
+      .then(() => {
+        getPosts();
+        getComments();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <Box w={"100%"}>
       <Box margin={"2rem"}>
@@ -123,9 +141,9 @@ const CreatePost = () => {
           templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
         >
           {posts?.map((item) => (
-            <Card key={item._id}>
-              <CardHeader>
-                <Tag size="lg" colorScheme="blue" borderRadius="full">
+            <Card border={'2px solid black'} key={item._id}>
+              <CardHeader bg={'red.900'}>
+                <Tag size="lg" colorScheme="orange" borderRadius="full">
                   <Avatar
                     src={item.userId.image}
                     size="xs"
@@ -135,56 +153,81 @@ const CreatePost = () => {
                   />
                   <TagLabel>{item.userId.username}</TagLabel>
                 </Tag>
-                <Heading size="sm"> {item.title}</Heading>
+                {/* <Heading size="sm"> {item.title}</Heading> */}
               </CardHeader>
-              <CardBody>
-                <Text>{item.body}</Text>
+              <CardBody  >
+                <Text  as="i" size={"sm"}>
+                  {item.body}
+                </Text>
               </CardBody>
 
-              <CardFooter>
+              <CardFooter border={'1px solid grey'}  >
                 <ButtonGroup>
-                  <IconButton
+                  {/* <IconButton
                     variant="outline"
                     colorScheme="teal"
                     aria-label="Call Sage"
                     fontSize="20px"
                     icon={<EditIcon />}
-                  />
+                  /> */}
+                  <Box>
+                    {commentBoolean && (
+                      <Input
+                        onChange={(e) => setCreateComment(e.target.value)}
+                        name="comment"
+                        value={createComment.comment}
+                      />
+                    )}
+                  </Box>
                   <IconButton
-                    variant="outline"
-                    colorScheme="teal"
+                    // variant="outline"
+                    colorScheme="facebook"
                     aria-label="Call Sage"
                     fontSize="20px"
+                    onClick={handlerNewCommentPost}
                     icon={<ChatIcon />}
                   />
                 </ButtonGroup>
               </CardFooter>
-              {comments?.map((item) => (
-                <Box key={item._id} h={"5rem"}>
-                  <Tag size="sm" variant="outline" colorScheme="green" borderRadius="sm">
-                    <Avatar
-                      src={item.userId.image}
-                      size="2xs"
-                      name={item.userId.username}
-                      ml={-1}
-                      mr={2}
-                    />
-                    <TagLabel>{item.userId.username}</TagLabel>
-                  </Tag>
-                  <Box
-                    padding={".1rem"}
-                    className="commentContainer"
-                    margin={"auto"}
-                    textAlign={"center"}
-                    w={"90%"}
-                  >
-                    <Text fontSize="2xs" className="commentText">
-                      {" "}
-                      {item.comment}
-                    </Text>
+              {commentBoolean &&
+                comments?.map((item) => (
+                  <Box  margin={".5rem"} key={item._id}>
+                    <Tag
+                      size="sm"
+                      variant="outline"
+                      colorScheme="green"
+                      borderRadius="sm"
+                    >
+                      <Avatar
+                        src={item.userId.image}
+                        size="2xs"
+                        name={item.userId.username}
+                        ml={-1}
+                        mr={2}
+                      />
+                      <TagLabel>{item.userId.username}</TagLabel>
+                    </Tag>
+                    <Box
+                      padding={".1rem"}
+                      className="commentContainer"
+                      margin={"auto"}
+                      textAlign={"center"}
+                      w={"90%"}
+                      bg={'grey'}
+                    >
+                      <Text
+                        as="em"
+                        noOfLines={5}
+                        fontSize="2xs"
+                        className="commentText"
+                        color={'#ffffff'}
+                      >
+                        {" "}
+                        {item.comment}
+                      </Text>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
+                ))}
             </Card>
           ))}
         </SimpleGrid>

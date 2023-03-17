@@ -18,7 +18,6 @@ router.post("/post", async (req, res) => {
   const { userId, comment, postId } = req.body;
   try {
     const comments = new CommentModel({ userId, comment, postId });
-    console.log(comments);
     await comments.save();
     return res.status(201).send(comments);
   } catch (error) {
